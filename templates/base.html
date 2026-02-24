@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DevTools{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e11d48',
+                        primaryDeep: '#be123c',
+                        electric: '#06b6d4',
+                        violet: '#7c3aed',
+                        appbg: '#0a0a0f',
+                        surface: '#12121a',
+                        elevated: '#1a1a28',
+                        appborder: '#2a2a3d',
+                        textmain: '#f8fafc',
+                        textmuted: '#94a3b8',
+                        success: '#10b981',
+                        danger: '#f43f5e',
+                        warning: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --elevated: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #e11d48;
+            --primary-deep: #be123c;
+            --electric: #06b6d4;
+            --violet: #7c3aed;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+        }
+        .dark {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --elevated: #1a1a28;
+            --border: #2a2a3d;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #e11d48;
+            --primary-deep: #be123c;
+            --electric: #06b6d4;
+            --violet: #7c3aed;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; }
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui;
+            background: var(--bg);
+            color: var(--text-main);
+            transition: background-color .3s ease, color .3s ease;
+            opacity: 0;
+            animation: pageFadeIn .3s ease-out forwards;
+        }
+        textarea, pre, code {
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .app-surface { background: var(--surface); }
+        .app-elevated { background: var(--elevated); }
+        .app-border { border-color: var(--border); }
+        .muted { color: var(--text-muted); }
+        .frosted {
+            background: color-mix(in srgb, var(--surface) 76%, transparent);
+            backdrop-filter: blur(12px);
+        }
+        .gradient-border-line {
+            height: 1px;
+            background: linear-gradient(90deg, var(--primary), transparent 80%);
+        }
+        .mobile-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease;
+        }
+        .mobile-drawer.open { max-height: 460px; }
+        .nav-underline {
+            position: relative;
+        }
+        .nav-underline::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width .25s ease;
+        }
+        .nav-underline:hover::after { width: 100%; }
+        .tool-card {
+            transform: translateY(0);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+            will-change: transform, opacity;
+        }
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 20px #e11d4840;
+            border-color: var(--primary);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .45s ease, transform .45s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .title-reveal {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity .45s ease, transform .45s ease;
+        }
+        .title-reveal.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .hero-typing {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--primary);
+            width: 0;
+            animation: typing 2.1s steps(34, end) forwards, cursorBlink .8s step-end infinite;
+        }
+        .mesh-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(225, 29, 72, .26), transparent 35%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, .20), transparent 38%),
+                radial-gradient(circle at 50% 80%, rgba(124, 58, 237, .22), transparent 42%);
+            animation: meshMove 12s ease-in-out infinite alternate;
+        }
+        .dot-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(148,163,184,.18) 1px, transparent 1px);
+            background-size: 16px 16px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,.65), transparent 95%);
+            pointer-events: none;
+        }
+        .particles::before,
+        .particles::after {
+            content: '';
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 999px;
+            filter: blur(40px);
+            opacity: .22;
+            animation: floatBlob 9s ease-in-out infinite;
+        }
+        .particles::before { background: #e11d48; top: 12%; left: 10%; }
+        .particles::after { background: #06b6d4; bottom: 14%; right: 8%; animation-delay: 2s; }
+        .btn-gradient {
+            background-size: 150% 150%;
+            background-image: linear-gradient(120deg, var(--primary), var(--violet));
+            transition: transform .2s ease, background-position .2s ease;
+        }
+        .btn-gradient:hover {
+            transform: scale(1.03);
+            background-position: 100% 0;
+        }
+        .category-pill {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .category-pill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, var(--primary), var(--violet));
+            transform: translateX(-102%);
+            transition: transform .26s ease;
+            z-index: -1;
+        }
+        .category-pill:hover::before,
+        .category-pill.active::before {
+            transform: translateX(0);
+        }
+        .category-pill:hover,
+        .category-pill.active {
+            color: #fff;
+            border-color: transparent;
+        }
+        .toast {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 60;
+            min-width: 220px;
+            max-width: 340px;
+            padding: .8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: .75rem;
+            color: var(--text-main);
+            background: var(--elevated);
+            box-shadow: 0 12px 30px rgba(0,0,0,.25);
+            transform: translateY(24px);
+            opacity: 0;
+            transition: transform .25s ease, opacity .25s ease;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        .toast.info { border-color: var(--electric); }
+        .loader {
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            animation: spin .7s linear infinite;
+            display: inline-block;
+        }
+        .focus-glow:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px #e11d48;
+        }
+        .shake { animation: shake .35s ease; }
+        .navbar-slide { animation: navSlide .4s ease-out; }
+        .bounce-arrow { animation: bounceArrow 1.6s infinite; }
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes navSlide { from { transform: translateY(-12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes cursorBlink { 0%,50% { border-color: var(--primary); } 51%,100% { border-color: transparent; } }
+        @keyframes meshMove { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-1.6%, 1.2%) scale(1.02); } }
+        @keyframes floatBlob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake {
+            10%,90% { transform: translateX(-1px); }
+            20%,80% { transform: translateX(2px); }
+            30%,50%,70% { transform: translateX(-4px); }
+            40%,60% { transform: translateX(4px); }
+        }
+        @keyframes bounceArrow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+        .mono-area {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 14px;
+            line-height: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <script>
+        const initialTheme = localStorage.getItem('theme') || 'dark';
+        if (initialTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <nav class="sticky top-0 z-50 navbar-slide frosted border-b app-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="h-16 flex items-center gap-3">
+                <a href="/" class="shrink-0 flex items-center gap-2">
+                    <span class="size-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_18px_#e11d4840]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25" />
+                        </svg>
+                    </span>
+                    <span class="font-extrabold tracking-tight text-lg">DevTools</span>
+                </a>
+
+                <div class="hidden md:flex flex-1 justify-center px-3">
+                    <div class="w-full max-w-xl relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 muted">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 6 6a7.5 7.5 0 0 0 10.65 10.65Z" />
+                            </svg>
+                        </span>
+                        <input id="globalToolSearch" type="search" placeholder="Search tools..." class="w-full h-10 pl-9 pr-3 rounded-xl border app-border app-surface text-sm focus-glow">
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-4 text-sm">
+                    <a href="/#formatters" class="nav-underline muted hover:text-[var(--text-main)]">Formatters</a>
+                    <a href="/#converters" class="nav-underline muted hover:text-[var(--text-main)]">Converters</a>
+                    <a href="/#generators" class="nav-underline muted hover:text-[var(--text-main)]">Generators</a>
+                </div>
+
+                <div class="ml-auto flex items-center gap-2">
+                    <button id="theme-toggle" type="button" class="relative h-10 w-10 rounded-xl border app-border app-surface hover:scale-105 transition" aria-label="Toggle dark mode">
+                        <svg id="theme-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 absolute inset-0 m-auto text-amber-400 opacity-0 scale-0 transition duration-300">
+                            <path d="M12 2.25a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z" />
+                            <path d="M5.636 4.575a.75.75 0 0 1 1.06 0l.53.53a.75.75 0 1 1-1.06 1.06l-.53-.53a.75.75 0 0 1 0-1.06Zm12.728 0a.75.75 0 0 1 0 1.06l-.53.53a.75.75 0 1 1-1.06-1.06l.53-.53a.75.75 0 0 1 1.06 0ZM12 18.75a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75Z" />
+                        </svg>
+                        <svg id="theme-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 absolute inset-0 m-auto text-cyan-300 opacity-100 scale-100 transition duration-300">
+                            <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819 8.26 8.26 0 0 0-.703 3.337c0 4.571 3.711 8.282 8.282 8.282.912 0 1.79-.147 2.612-.419a.75.75 0 0 1 .937.901 10.504 10.504 0 1 1-11.29-12.92Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <a href="https://github.com" target="_blank" rel="noreferrer" class="hidden sm:inline-flex items-center gap-2 h-10 px-3 rounded-xl border app-border app-surface text-sm hover:border-primary transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M12 2a10 10 0 0 0-3.162 19.486c.5.093.682-.217.682-.48 0-.237-.009-.866-.014-1.7-2.776.603-3.362-1.338-3.362-1.338-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.068-.608.068-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.528 2.341 1.087 2.91.832.09-.646.35-1.087.636-1.337-2.217-.252-4.55-1.109-4.55-4.937 0-1.09.39-1.981 1.028-2.678-.103-.253-.446-1.268.098-2.644 0 0 .84-.269 2.75 1.023A9.56 9.56 0 0 1 12 6.844c.85.004 1.706.115 2.505.337 1.909-1.292 2.748-1.023 2.748-1.023.545 1.376.202 2.391.1 2.644.64.697 1.027 1.589 1.027 2.678 0 3.837-2.337 4.682-4.56 4.93.359.31.679.92.679 1.855 0 1.338-.012 2.417-.012 2.745 0 .266.18.577.688.479A10 10 0 0 0 12 2Z" clip-rule="evenodd" /></svg>
+                        GitHub
+                    </a>
+                    <button id="mobile-menu-toggle" type="button" class="md:hidden h-10 w-10 rounded-xl border app-border app-surface flex items-center justify-center" aria-label="Toggle menu">
+                        <span id="burger" class="relative block w-5 h-4">
+                            <span class="absolute w-full h-0.5 bg-current top-0 left-0 transition-all"></span>
+                            <span class="absolute w-full h-0.5 bg-current top-1.5 left-0 transition-all"></span>
+                            <span class="absolute w-full h-0.5 bg-current top-3 left-0 transition-all"></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="gradient-border-line"></div>
+
+        <div id="mobile-drawer" class="mobile-drawer md:hidden border-t app-border">
+            <div class="max-w-7xl mx-auto px-4 py-4 space-y-3">
+                <input id="globalToolSearchMobile" type="search" placeholder="Search tools..." class="w-full h-10 px-3 rounded-xl border app-border app-surface focus-glow">
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <a href="/#formatters" class="px-3 py-2 rounded-lg border app-border app-surface">Formatters</a>
+                    <a href="/#converters" class="px-3 py-2 rounded-lg border app-border app-surface">Converters</a>
+                    <a href="/#generators" class="px-3 py-2 rounded-lg border app-border app-surface">Generators</a>
+                    <a href="/#network" class="px-3 py-2 rounded-lg border app-border app-surface">Network</a>
+                    <a href="/#image" class="px-3 py-2 rounded-lg border app-border app-surface">Image</a>
+                    <a href="/#text" class="px-3 py-2 rounded-lg border app-border app-surface">Text</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t app-border app-surface mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+                <h3 class="font-semibold text-base mb-3">Tool Categories</h3>
+                <ul class="space-y-2 muted">
+                    <li><a href="/#formatters" class="hover:text-[var(--text-main)]">Formatters</a></li>
+                    <li><a href="/#converters" class="hover:text-[var(--text-main)]">Converters</a></li>
+                    <li><a href="/#generators" class="hover:text-[var(--text-main)]">Generators</a></li>
+                    <li><a href="/#network" class="hover:text-[var(--text-main)]">Network</a></li>
+                    <li><a href="/#image" class="hover:text-[var(--text-main)]">Image</a></li>
+                    <li><a href="/#text" class="hover:text-[var(--text-main)]">Text</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-semibold text-base mb-3">Quick Links</h3>
+                <ul class="space-y-2 muted">
+                    <li><a href="/" class="hover:text-[var(--text-main)]">Home</a></li>
+                    <li><a href="/formatters/json-formatter" class="hover:text-[var(--text-main)]">JSON Formatter</a></li>
+                    <li><a href="/formatters/xml-beautifier" class="hover:text-[var(--text-main)]">XML Beautifier</a></li>
+                    <li><a href="https://github.com" target="_blank" rel="noreferrer" class="hover:text-[var(--text-main)]">GitHub</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-semibold text-base mb-3">About</h3>
+                <p class="muted leading-6">A modern suite of free tools for developers. No signup, no limits, just fast utility workflows.</p>
+            </div>
+        </div>
+        <div class="border-t app-border/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs muted">
+                <span>© 2026 DevTools</span>
+                <span>Built with FastAPI & Tailwind</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="fullscreenOverlay" class="fixed inset-0 z-[70] hidden bg-black/90 p-4 sm:p-8">
+        <button type="button" id="fullscreenClose" class="absolute top-4 right-4 px-3 py-2 rounded-lg border border-white/25 text-white">✕</button>
+        <textarea id="fullscreenArea" readonly class="w-full h-full rounded-xl border border-white/20 bg-[#0d0d14] text-white mono-area p-4"></textarea>
+    </div>
+
+    <script>
+        const htmlEl = document.documentElement;
+        const bodyEl = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSun = document.getElementById('theme-sun');
+        const themeMoon = document.getElementById('theme-moon');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const burger = document.getElementById('burger');
+        const searchDesktop = document.getElementById('globalToolSearch');
+        const searchMobile = document.getElementById('globalToolSearchMobile');
+
+        function darkModeToggle() {
+            const isDark = htmlEl.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+            showToast(isDark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+        }
+
+        function updateThemeIcon() {
+            const isDark = htmlEl.classList.contains('dark');
+            if (isDark) {
+                themeMoon.classList.remove('opacity-0', 'scale-0');
+                themeMoon.classList.add('opacity-100', 'scale-100', 'rotate-0');
+                themeSun.classList.remove('opacity-100', 'scale-100', 'rotate-0');
+                themeSun.classList.add('opacity-0', 'scale-0', '-rotate-45');
+            } else {
+                themeSun.classList.remove('opacity-0', 'scale-0', '-rotate-45');
+                themeSun.classList.add('opacity-100', 'scale-100', 'rotate-0');
+                themeMoon.classList.remove('opacity-100', 'scale-100', 'rotate-0');
+                themeMoon.classList.add('opacity-0', 'scale-0', 'rotate-45');
+            }
+        }
+
+        async function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            try {
+                const value = element.value !== undefined ? element.value : element.innerText;
+                await navigator.clipboard.writeText(value || '');
+                showToast('Copied to clipboard!', 'success');
+            } catch (error) {
+                showToast('Copy failed', 'error');
+            }
+        }
+
+        function downloadOutput(elementId, filename, extension) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            const outputText = element.value !== undefined ? element.value : element.innerText;
+            const blob = new Blob([outputText || ''], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${filename}.${extension}`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function clearInput(elementId) {
+            const input = document.getElementById(elementId);
+            if (!input) return;
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        async function pasteFromClipboard(elementId) {
+            const input = document.getElementById(elementId);
+            if (!input) return;
+            try {
+                const text = await navigator.clipboard.readText();
+                input.value = text;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                showToast('Pasted from clipboard', 'success');
+            } catch (error) {
+                showToast('Clipboard access denied', 'error');
+            }
+        }
+
+        function liveCharCount(inputId, counterId) {
+            const input = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            if (!input || !counter) return;
+            const update = () => {
+                const text = input.value || '';
+                const lines = text.length ? text.split('\n').length : 0;
+                counter.textContent = `Characters: ${text.length} | Lines: ${lines}`;
+            };
+            input.addEventListener('input', update);
+            update();
+        }
+
+        function filterTools(query) {
+            const q = (query || '').trim().toLowerCase();
+            const cards = document.querySelectorAll('[data-tool-card]');
+            cards.forEach((card) => {
+                const name = (card.dataset.toolName || '').toLowerCase();
+                const desc = (card.dataset.toolDesc || '').toLowerCase();
+                const visible = !q || name.includes(q) || desc.includes(q);
+                card.style.display = visible ? '' : 'none';
+            });
+        }
+
+        function filterByCategory(category) {
+            const cards = document.querySelectorAll('[data-tool-card]');
+            const tabs = document.querySelectorAll('[data-category-tab]');
+            tabs.forEach((tab) => {
+                if ((tab.dataset.categoryTab || 'all') === category) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            cards.forEach((card) => {
+                const cardCategory = (card.dataset.category || '').toLowerCase();
+                const visible = category === 'all' || cardCategory === category;
+                card.style.display = visible ? '' : 'none';
+            });
+        }
+
+        function countUpAnimation() {
+            const statValues = document.querySelectorAll('[data-count-to]');
+            if (!statValues.length) return;
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const el = entry.target;
+                    const target = Number(el.dataset.countTo || '0');
+                    const suffix = el.dataset.countSuffix || '';
+                    const duration = 1200;
+                    const startTime = performance.now();
+                    const tick = (now) => {
+                        const progress = Math.min((now - startTime) / duration, 1);
+                        const val = Math.floor(progress * target);
+                        el.textContent = `${val}${suffix}`;
+                        if (progress < 1) {
+                            requestAnimationFrame(tick);
+                        } else {
+                            el.textContent = `${target}${suffix}`;
+                        }
+                    };
+                    requestAnimationFrame(tick);
+                    obs.unobserve(el);
+                });
+            }, { threshold: 0.35 });
+            statValues.forEach((el) => observer.observe(el));
+        }
+
+        function scrollAnimations() {
+            const animated = document.querySelectorAll('.reveal, .title-reveal, [data-scroll-reveal]');
+            if (!animated.length) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.12 });
+            animated.forEach((el) => observer.observe(el));
+        }
+
+        function fullscreenOutput(elementId) {
+            const output = document.getElementById(elementId);
+            const overlay = document.getElementById('fullscreenOverlay');
+            const area = document.getElementById('fullscreenArea');
+            if (!output || !overlay || !area) return;
+            area.value = output.value !== undefined ? output.value : output.innerText;
+            overlay.classList.remove('hidden');
+        }
+
+        function addLineNumbers(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            const gutterId = textarea.dataset.linenumbers;
+            const gutter = gutterId ? document.getElementById(gutterId) : null;
+            if (!gutter) return;
+            const render = () => {
+                const lineCount = (textarea.value.match(/\n/g) || []).length + 1;
+                const lines = Array.from({ length: lineCount }, (_, index) => `<div>${index + 1}</div>`).join('');
+                gutter.innerHTML = lines;
+            };
+            textarea.addEventListener('input', render);
+            textarea.addEventListener('scroll', () => { gutter.scrollTop = textarea.scrollTop; });
+            render();
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            requestAnimationFrame(() => toast.classList.add('show'));
+            window.clearTimeout(toast._timeout);
+            toast._timeout = window.setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function formLoadingState(buttonId) {
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+            const spinner = button.querySelector('.tool-loading-spinner');
+            if (spinner) spinner.classList.remove('hidden');
+            button.setAttribute('disabled', 'disabled');
+            button.classList.add('opacity-90');
+        }
+
+        function hookSearchInputs() {
+            const relay = (value) => {
+                filterTools(value);
+            };
+            if (searchDesktop) {
+                searchDesktop.addEventListener('input', (event) => {
+                    relay(event.target.value);
+                    if (searchMobile && searchMobile.value !== event.target.value) {
+                        searchMobile.value = event.target.value;
+                    }
+                });
+            }
+            if (searchMobile) {
+                searchMobile.addEventListener('input', (event) => {
+                    relay(event.target.value);
+                    if (searchDesktop && searchDesktop.value !== event.target.value) {
+                        searchDesktop.value = event.target.value;
+                    }
+                });
+            }
+        }
+
+        function initTextareaEnhancements() {
+            document.querySelectorAll('textarea[data-charcount]').forEach((area) => {
+                liveCharCount(area.id, area.dataset.charcount);
+            });
+            document.querySelectorAll('textarea[data-linenumbers]').forEach((area) => {
+                addLineNumbers(area.id);
+            });
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', darkModeToggle);
+        }
+
+        if (mobileMenuToggle && mobileDrawer) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileDrawer.classList.toggle('open');
+                if (burger) {
+                    const spans = burger.querySelectorAll('span');
+                    if (mobileDrawer.classList.contains('open')) {
+                        spans[0].style.transform = 'translateY(6px) rotate(45deg)';
+                        spans[1].style.opacity = '0';
+                        spans[2].style.transform = 'translateY(-6px) rotate(-45deg)';
+                    } else {
+                        spans[0].style.transform = '';
+                        spans[1].style.opacity = '';
+                        spans[2].style.transform = '';
+                    }
+                }
+            });
+        }
+
+        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+        const fullscreenClose = document.getElementById('fullscreenClose');
+        if (fullscreenClose && fullscreenOverlay) {
+            fullscreenClose.addEventListener('click', () => fullscreenOverlay.classList.add('hidden'));
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    fullscreenOverlay.classList.add('hidden');
+                }
+            });
+        }
+
+        updateThemeIcon();
+        hookSearchInputs();
+        countUpAnimation();
+        scrollAnimations();
+        initTextareaEnhancements();
+    </script>
+    {% block page_scripts %}{% endblock %}
+</body>
+</html>
