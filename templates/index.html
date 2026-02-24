@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Developer Tools. Fast. Free. No Login.{% endblock %}
+
+{% block content %}
+<section class="relative min-h-[88vh] flex items-center overflow-hidden rounded-3xl border app-border app-surface">
+    <div class="mesh-bg"></div>
+    <div class="dot-overlay"></div>
+    <div class="particles absolute inset-0"></div>
+    <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 py-12 text-center lg:text-left">
+        <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs border app-border app-elevated mb-5 reveal">
+            <span class="size-2 rounded-full bg-[#06b6d4]"></span>
+            21 free tools • no setup
+        </p>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4">
+            <span class="hero-typing">Build Faster with Free Dev Tools</span>
+        </h1>
+        <p class="max-w-2xl mx-auto lg:mx-0 muted text-base sm:text-lg reveal">21 free tools. No signup. No limits. Just build.</p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start reveal">
+            <a href="#tools" class="btn-gradient inline-flex items-center justify-center px-6 py-3 rounded-xl text-white font-semibold">Explore Tools</a>
+            <a href="https://github.com" target="_blank" rel="noreferrer" class="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-primary text-primary hover:bg-primary hover:text-white transition">View on GitHub</a>
+        </div>
+        <a href="#stats" class="mt-10 inline-flex items-center justify-center text-sm muted bounce-arrow">↓ Scroll</a>
+    </div>
+</section>
+
+<section id="stats" class="mt-8 rounded-2xl border app-border app-elevated py-6 px-4 sm:px-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+        <div class="reveal">
+            <div class="text-primary text-xl">🧰</div>
+            <p class="text-2xl font-bold" data-count-to="21" data-count-suffix="+">0+</p>
+            <p class="text-xs muted mt-1">Tools</p>
+        </div>
+        <div class="reveal" style="transition-delay:.06s">
+            <div class="text-primary text-xl">💎</div>
+            <p class="text-2xl font-bold" data-count-to="100" data-count-suffix="%">0%</p>
+            <p class="text-xs muted mt-1">Free</p>
+        </div>
+        <div class="reveal" style="transition-delay:.12s">
+            <div class="text-primary text-xl">🔓</div>
+            <p class="text-2xl font-bold" data-count-to="0" data-count-suffix="">0</p>
+            <p class="text-xs muted mt-1">Login Required</p>
+        </div>
+        <div class="reveal" style="transition-delay:.18s">
+            <div class="text-primary text-xl">🌙</div>
+            <p class="text-2xl font-bold" data-count-to="1" data-count-suffix="">0</p>
+            <p class="text-xs muted mt-1">Dark Mode Default</p>
+        </div>
+    </div>
+</section>
+
+<section id="tools" class="mt-8 space-y-5">
+    <div class="overflow-x-auto">
+        <div class="flex gap-2 min-w-max">
+            <button data-category-tab="all" onclick="filterByCategory('all')" class="category-pill active px-4 py-2 rounded-full border app-border app-surface text-sm">All</button>
+            <button data-category-tab="formatters" onclick="filterByCategory('formatters')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Formatters</button>
+            <button data-category-tab="converters" onclick="filterByCategory('converters')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Converters</button>
+            <button data-category-tab="generators" onclick="filterByCategory('generators')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Generators</button>
+            <button data-category-tab="network" onclick="filterByCategory('network')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Network</button>
+            <button data-category-tab="image" onclick="filterByCategory('image')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Image</button>
+            <button data-category-tab="text" onclick="filterByCategory('text')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Text</button>
+        </div>
+    </div>
+
+    {% for category, tools in categories.items() %}
+    <section id="{{ category|lower }}" class="space-y-3">
+        <h2 class="title-reveal text-xl sm:text-2xl font-bold pl-3 border-l-4 border-primary">{{ category }}</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            {% for tool in tools %}
+            {% set category_lower = category|lower %}
+            <a href="{{ tool.path }}"
+               data-tool-card
+               data-category="{{ category_lower }}"
+               data-tool-name="{{ tool.name }}"
+               data-tool-desc="{{ tool.description }}"
+               class="tool-card reveal relative rounded-2xl border app-border app-surface p-5 flex flex-col gap-4">
+                {% if tool.name == 'XML Beautifier & Validator' %}
+                <span class="absolute top-3 right-3 text-[10px] px-2 py-1 rounded-full bg-primary text-white">New</span>
+                {% endif %}
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl
+                        {% if category_lower == 'formatters' %}text-primary{% elif category_lower == 'converters' %}text-electric{% elif category_lower == 'generators' %}text-violet{% elif category_lower == 'network' %}text-emerald-400{% elif category_lower == 'image' %}text-amber-400{% else %}text-cyan-300{% endif %}">{{ tool.icon }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="size-4 muted"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" /></svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-base leading-tight">{{ tool.name }}</h3>
+                    <p class="mt-2 text-sm muted">{{ tool.description }}</p>
+                </div>
+                <div class="mt-auto flex items-center justify-between text-xs">
+                    <span class="px-2.5 py-1 rounded-full border app-border app-elevated">{{ category }}</span>
+                    <span class="muted">Open</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</section>
+{% endblock %}

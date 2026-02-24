@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Website Status Checker{% endblock %}
+{% block content %}
+<section class="space-y-6" data-tool-page>
+<nav class="text-sm muted flex items-center gap-2"><a href="/">Home</a><span>›</span><span>Network</span><span>›</span><span class="text-[var(--text-main)]">Site Status</span></nav>
+<h1 class="text-2xl sm:text-3xl font-bold">Website Status Checker</h1>
+<p class="muted">Check HTTP status code and response time for a website.</p>
+<form method="post" class="space-y-5" onsubmit="formLoadingState('status-submit')">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-5" data-scroll-reveal>
+<section class="rounded-2xl border app-border app-surface p-4 min-h-[360px]"><h2 class="font-semibold mb-2">Input</h2><input name="url" value="{{ url }}" class="w-full h-11 px-3 rounded-lg border app-border app-elevated focus-glow" placeholder="https://example.com"><textarea id="status-note" data-charcount="status-counter" class="mono-area w-full h-48 mt-3 rounded-xl border app-border app-elevated p-3 muted" readonly>You can enter domain only; HTTPS is auto-added if missing.</textarea><div id="status-counter" class="text-xs muted mt-2">Characters: 0 | Lines: 0</div></section>
+<section class="rounded-2xl border app-border app-surface min-h-[360px] overflow-hidden"><header class="px-4 py-3 border-b app-border border-t-2 border-t-success flex justify-between"><h2 class="font-semibold">Output</h2><div class="flex gap-2"><button type="button" onclick="copyToClipboard('status-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border">Copy</button><button type="button" onclick="downloadOutput('status-output','site-status-report','txt')" class="px-3 py-1.5 text-xs rounded-lg border app-border">Download</button><button type="button" onclick="fullscreenOutput('status-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border">Fullscreen</button></div></header><div class="p-4"><textarea id="status-output" readonly class="mono-area w-full h-64 rounded-xl border app-border bg-[#0d0d14] text-[#f8fafc] p-3">{{ result }}</textarea></div></section>
+</div>
+<div class="flex justify-center"><button id="status-submit" class="btn-gradient w-full sm:w-auto min-w-[220px] px-6 py-3 rounded-xl text-white font-semibold inline-flex items-center justify-center gap-2"><span>Check Status</span><span class="hidden tool-loading-spinner loader"></span></button></div>
+</form>
+</section>
+{% endblock %}

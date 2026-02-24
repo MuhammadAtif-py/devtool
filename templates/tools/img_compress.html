@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Image Compressor{% endblock %}
+{% block content %}
+<section class="space-y-6" data-tool-page>
+<nav class="text-sm muted flex items-center gap-2"><a href="/">Home</a><span>›</span><span>Image</span><span>›</span><span class="text-[var(--text-main)]">Image Compressor</span></nav>
+<h1 class="text-2xl sm:text-3xl font-bold">Image Compressor</h1>
+<p class="muted">Upload and compress image quality while preserving clarity.</p>
+<form method="post" enctype="multipart/form-data" class="space-y-5" onsubmit="formLoadingState('img-compress-submit')">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-5" data-scroll-reveal>
+<section class="rounded-2xl border app-border app-surface p-4 min-h-[420px]"><h2 class="font-semibold mb-2">Input</h2><input type="file" name="file" accept="image/*" class="w-full h-11 px-2 py-1 rounded-lg border app-border app-elevated" required><label class="block text-sm muted mt-3">Quality: {{ quality }}</label><input type="range" min="1" max="95" name="quality" value="{{ quality }}" class="w-full accent-primary"><textarea id="img-compress-note" data-charcount="img-compress-counter" class="mono-area w-full h-44 mt-3 rounded-xl border app-border app-elevated p-3 muted" readonly>Lower quality means smaller file size.</textarea><div id="img-compress-counter" class="text-xs muted mt-2">Characters: 0 | Lines: 0</div></section>
+<section class="rounded-2xl border app-border app-surface min-h-[420px] overflow-hidden"><header class="px-4 py-3 border-b app-border border-t-2 border-t-success flex justify-between"><h2 class="font-semibold">Output</h2><div class="flex gap-2"><button type="button" onclick="copyToClipboard('img-compress-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border">Copy</button>{% if image_url %}<a href="{{ image_url }}" download class="px-3 py-1.5 text-xs rounded-lg border app-border">Download</a>{% else %}<button type="button" class="px-3 py-1.5 text-xs rounded-lg border app-border opacity-50" disabled>Download</button>{% endif %}<button type="button" onclick="fullscreenOutput('img-compress-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border">Fullscreen</button></div></header><div class="p-4 space-y-3"><textarea id="img-compress-output" readonly class="mono-area w-full h-24 rounded-xl border app-border bg-[#0d0d14] text-[#f8fafc] p-3">{{ result }}</textarea><div class="h-64 rounded-xl border app-border bg-[#0d0d14] flex items-center justify-center p-3">{% if image_url %}<img src="{{ image_url }}" class="max-h-56 rounded" alt="Compressed image">{% else %}<span class="muted text-sm">Compressed preview</span>{% endif %}</div></div></section>
+</div>
+<div class="flex justify-center"><button id="img-compress-submit" class="btn-gradient w-full sm:w-auto min-w-[240px] px-6 py-3 rounded-xl text-white font-semibold inline-flex items-center justify-center gap-2"><span>Compress Image</span><span class="hidden tool-loading-spinner loader"></span></button></div>
+</form>
+</section>
+{% endblock %}
