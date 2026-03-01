@@ -1,6 +1,6 @@
 # Developer Utility Toolkit
 
-A fully working FastAPI-based developer utility website with 20 practical tools.
+A fully working FastAPI-based developer utility website with 30 practical tools.
 
 ## Requirements
 
@@ -17,6 +17,29 @@ pip install -r requirements.txt
 ```bash
 uvicorn main:app --reload
 ```
+
+## AWS Deploy (Serverless)
+
+This project is deployed on AWS Lambda + API Gateway.
+
+- Live URL: https://7ix3t2s1g3.execute-api.us-east-1.amazonaws.com
+
+### One-command deploy (Windows)
+
+```bat
+deploy.bat
+```
+
+What `deploy.bat` does:
+
+1. Checks AWS CLI credentials (`aws sts get-caller-identity`)
+2. Builds SAM artifacts (`sam build --cached`)
+3. Deploys stack from build template (`sam deploy --template-file .aws-sam\build\template.yaml ...`)
+
+Prerequisites:
+
+- AWS CLI configured (`aws configure`)
+- AWS SAM CLI installed
 
 ## Folder Setup
 
@@ -67,3 +90,4 @@ devtools/
 - Tailwind CSS is loaded via CDN in the base template.
 - Dark mode is enabled by default and persisted with localStorage.
 - Image outputs are saved in `static/uploads/` and served through `/static`.
+- On AWS Lambda, image uploads are written to `/tmp/uploads` and served at `/uploads`.
