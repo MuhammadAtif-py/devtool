@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Lorem Ipsum Generator{% endblock %}
+
+{% block content %}
+<section class="space-y-6" data-tool-page>
+    <nav class="text-sm muted flex items-center gap-2">
+        <a href="/" class="hover:text-[var(--text-main)]">Home</a>
+        <span>›</span>
+        <span>Generators</span>
+        <span>›</span>
+        <span class="text-[var(--text-main)]">Lorem Ipsum</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+        <div class="flex items-start gap-4">
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">Lorem Ipsum Generator</h1>
+                <p class="muted mt-1">Generate placeholder text for your designs and layouts.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <a href="/" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">← Back</a>
+        </div>
+    </div>
+
+    <form method="post" class="space-y-5" onsubmit="formLoadingState('lorem-submit-btn')">
+        <div class="rounded-2xl border app-border app-surface overflow-hidden" data-scroll-reveal>
+            <header class="px-4 py-3 border-b app-border border-t-2 border-t-violet flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold">Options</h2>
+                    <p class="text-xs muted">Choose how much text to generate</p>
+                </div>
+            </header>
+            <div class="p-5">
+                <div class="flex flex-col sm:flex-row gap-4 items-end">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium mb-1.5">Number of Paragraphs</label>
+                        <input type="number" name="paragraphs" value="{{ paragraphs }}" min="1" max="50" class="w-full h-11 px-4 rounded-xl border app-border app-elevated focus-glow">
+                    </div>
+                    <button id="lorem-submit-btn" type="submit" class="btn-gradient h-11 px-6 rounded-xl text-white font-semibold inline-flex items-center justify-center gap-2">
+                        <span>Generate</span>
+                        <span class="hidden tool-loading-spinner loader"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {% if result %}
+        <div class="rounded-2xl border border-success app-surface overflow-hidden" data-scroll-reveal>
+            <header class="px-4 py-3 border-b app-border border-t-2 border-t-success flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold">Generated Text</h2>
+                    <p class="text-xs muted">{{ paragraphs }} paragraph{{ 's' if paragraphs|int > 1 else '' }}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyToClipboard('lorem-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Copy</button>
+                    <button type="button" onclick="downloadOutput('lorem-output','lorem-ipsum','txt')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Download</button>
+                </div>
+            </header>
+            <div class="p-5">
+                <textarea id="lorem-output" readonly class="w-full min-h-[300px] px-4 py-3 rounded-xl border app-border bg-[#0d0d14] mono-area text-[#f8fafc] resize-none outline-none">{{ result }}</textarea>
+            </div>
+        </div>
+        {% endif %}
+    </form>
+
+    <section>
+        <h3 class="text-lg font-semibold border-l-4 border-primary pl-3 mb-4">You might also like</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/generators/password-gen" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Password Generator</p><p class="text-sm muted mt-1">Create secure passwords.</p></a>
+            <a href="/generators/uuid-gen" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">UUID Generator</p><p class="text-sm muted mt-1">Generate unique identifiers.</p></a>
+            <a href="/text-tools/word-counter" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Word Counter</p><p class="text-sm muted mt-1">Count words and characters.</p></a>
+        </div>
+    </section>
+</section>
+{% endblock %}

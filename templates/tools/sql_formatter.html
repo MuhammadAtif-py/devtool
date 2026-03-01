@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}SQL Formatter{% endblock %}
+
+{% block content %}
+<section class="space-y-6" data-tool-page>
+    <nav class="text-sm muted flex items-center gap-2">
+        <a href="/" class="hover:text-[var(--text-main)]">Home</a>
+        <span>›</span>
+        <span>Formatters</span>
+        <span>›</span>
+        <span class="text-[var(--text-main)]">SQL Formatter</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+        <div class="flex items-start gap-4">
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">SQL Formatter</h1>
+                <p class="muted mt-1">Beautify and format SQL queries with proper indentation and uppercase keywords.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <a href="/" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">← Back</a>
+        </div>
+    </div>
+
+    <form method="post" class="space-y-5" onsubmit="formLoadingState('sql-submit-btn')">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-5" data-scroll-reveal>
+            <section class="rounded-2xl border app-border app-surface overflow-hidden flex flex-col min-h-[470px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 border-t-primary flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold">Input</h2>
+                        <p class="text-xs muted">Paste your SQL query</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="pasteFromClipboard('sql-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Paste</button>
+                        <button type="button" onclick="clearInput('sql-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Clear</button>
+                    </div>
+                </header>
+                <div class="flex-1 p-4 flex flex-col">
+                    <div class="relative flex-1 rounded-xl border app-border overflow-hidden bg-[#0d0d14]">
+                        <div id="sql-input-lines" class="absolute left-0 top-0 bottom-0 w-12 bg-[#11111a] text-[11px] text-[#64748b] text-right pr-2 py-3 overflow-hidden select-none"></div>
+                        <textarea id="sql-input" name="input_text" data-linenumbers="sql-input-lines" data-charcount="sql-counter" spellcheck="false" class="absolute inset-0 w-full h-full pl-14 pr-4 py-3 bg-transparent mono-area text-[#f8fafc] resize-none outline-none" placeholder="SELECT * FROM users WHERE active = 1 ORDER BY name;">{{ input_text }}</textarea>
+                    </div>
+                    <div id="sql-counter" class="mt-2 text-xs muted">Characters: 0 | Lines: 0</div>
+                </div>
+            </section>
+
+            {% set is_error = result.startswith('Error:') if result else false %}
+            <section class="rounded-2xl border {{ 'border-danger' if is_error else 'border-success' if result else 'app-border' }} app-surface overflow-hidden flex flex-col min-h-[470px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 {{ 'border-t-danger' if is_error else 'border-t-success' if result else 'border-t-primary' }} flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold">Output</h2>
+                        <p class="text-xs muted">Formatted SQL</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="copyToClipboard('sql-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Copy</button>
+                        <button type="button" onclick="downloadOutput('sql-output','formatted','sql')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Download</button>
+                        <button type="button" onclick="fullscreenOutput('sql-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Fullscreen</button>
+                    </div>
+                </header>
+                <div class="flex-1 p-4 flex flex-col">
+                    <div class="relative flex-1 rounded-xl border app-border overflow-hidden bg-[#0d0d14]">
+                        <div id="sql-output-lines" class="absolute left-0 top-0 bottom-0 w-12 bg-[#11111a] text-[11px] text-[#64748b] text-right pr-2 py-3 overflow-hidden select-none"></div>
+                        <textarea id="sql-output" readonly data-linenumbers="sql-output-lines" class="absolute inset-0 w-full h-full pl-14 pr-4 py-3 bg-transparent mono-area text-[#f8fafc] resize-none outline-none">{{ result }}</textarea>
+                    </div>
+                    {% if is_error %}
+                    <p class="mt-2 text-xs text-danger">Could not format the SQL query.</p>
+                    {% elif result %}
+                    <p class="mt-2 text-xs text-success">SQL formatted successfully.</p>
+                    {% else %}
+                    <p class="mt-2 text-xs muted">Formatted output appears here.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div class="flex justify-center">
+            <button id="sql-submit-btn" type="submit" class="btn-gradient w-full sm:w-auto min-w-[220px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold">
+                <span>Format SQL</span>
+                <span class="hidden tool-loading-spinner loader"></span>
+            </button>
+        </div>
+    </form>
+
+    <section>
+        <h3 class="text-lg font-semibold border-l-4 border-primary pl-3 mb-4">You might also like</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/formatters/json-formatter" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">JSON Formatter</p><p class="text-sm muted mt-1">Format and validate JSON data.</p></a>
+            <a href="/formatters/xml-beautifier" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">XML Beautifier</p><p class="text-sm muted mt-1">Beautify and validate XML content.</p></a>
+            <a href="/converters/json-csv" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">JSON to CSV</p><p class="text-sm muted mt-1">Convert JSON arrays to CSV files.</p></a>
+        </div>
+    </section>
+</section>
+{% endblock %}

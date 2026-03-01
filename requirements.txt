@@ -10,3 +10,7 @@ htmlmin2
 dnspython
 python-whois
 requests
+sqlparse
+markdown
+python-slugify
+mangum

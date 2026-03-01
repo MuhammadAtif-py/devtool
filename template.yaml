@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: DevTools - Developer Utility Toolkit (Serverless)
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.13
+    Architectures:
+      - x86_64
+
+Resources:
+  DevToolsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.handler
+      CodeUri: .
+      Description: FastAPI DevTools served via Lambda
+      Events:
+        RootPath:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+        ProxyPath:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+      Environment:
+        Variables:
+          # Lambda /tmp is writable, used for image uploads
+          TMPDIR: /tmp
+
+Outputs:
+  DevToolsUrl:
+    Description: URL of the deployed DevTools app
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"

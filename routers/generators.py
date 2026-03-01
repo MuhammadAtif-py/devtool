@@ -1,6 +1,8 @@
 import base64
 import hashlib
 import io
+import json
+import random
 import secrets
 import string
 import uuid
@@ -158,4 +160,84 @@ async def meta_post(
             "twitter_card": twitter_card,
             "result": result,
         },
+    )
+
+
+# --- Lorem Ipsum Generator ---
+LOREM_WORDS = (
+    "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor "
+    "incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud "
+    "exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure "
+    "dolor in reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur "
+    "sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id "
+    "est laborum perspiciatis unde omnis iste natus error voluptatem accusantium doloremque "
+    "laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis quasi "
+    "architecto beatae vitae dicta explicabo nemo ipsam voluptas aspernatur aut odit "
+    "aut fugit sed quia consequuntur magni dolores eos ratione sequi nesciunt neque porro "
+    "quisquam est qui dolorem ipsum quia dolor amet consectetur adipisci velit numquam "
+    "eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat"
+).split()
+
+
+def _generate_lorem(paragraphs: int) -> str:
+    result = []
+    for _ in range(paragraphs):
+        sentence_count = random.randint(4, 8)
+        sentences = []
+        for _ in range(sentence_count):
+            word_count = random.randint(6, 16)
+            words = [random.choice(LOREM_WORDS) for _ in range(word_count)]
+            words[0] = words[0].capitalize()
+            sentences.append(" ".join(words) + ".")
+        result.append(" ".join(sentences))
+    return "\n\n".join(result)
+
+
+@router.get("/lorem-ipsum")
+async def lorem_ipsum_get(request: Request):
+    return templates.TemplateResponse("tools/lorem_ipsum.html", {"request": request, "paragraphs": 3, "result": ""})
+
+
+@router.post("/lorem-ipsum")
+async def lorem_ipsum_post(request: Request, paragraphs: int = Form(3)):
+    try:
+        safe_count = max(1, min(50, paragraphs))
+        result = _generate_lorem(safe_count)
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/lorem_ipsum.html", {"request": request, "paragraphs": paragraphs, "result": result})
+
+
+# --- JWT Decoder ---
+@router.get("/jwt-decoder")
+async def jwt_decoder_get(request: Request):
+    return templates.TemplateResponse("tools/jwt_decoder.html", {"request": request, "input_text": "", "header_result": "", "payload_result": "", "error": ""})
+
+
+@router.post("/jwt-decoder")
+async def jwt_decoder_post(request: Request, input_text: str = Form("")):
+    header_result = ""
+    payload_result = ""
+    error = ""
+    try:
+        token = input_text.strip()
+        if token.lower().startswith("bearer "):
+            token = token[7:].strip()
+        parts = token.split(".")
+        if len(parts) < 2:
+            raise ValueError("Invalid JWT: must have at least 2 parts separated by dots")
+
+        def _decode_part(part: str) -> dict:
+            padding = 4 - len(part) % 4 if len(part) % 4 else 0
+            padded = part + "=" * padding
+            decoded = base64.urlsafe_b64decode(padded)
+            return json.loads(decoded)
+
+        header_result = json.dumps(_decode_part(parts[0]), indent=4, ensure_ascii=False)
+        payload_result = json.dumps(_decode_part(parts[1]), indent=4, ensure_ascii=False)
+    except Exception as exc:
+        error = str(exc)
+    return templates.TemplateResponse(
+        "tools/jwt_decoder.html",
+        {"request": request, "input_text": input_text, "header_result": header_result, "payload_result": payload_result, "error": error},
     )

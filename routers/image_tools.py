@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from uuid import uuid4
 
@@ -8,7 +9,12 @@ from PIL import Image
 router = APIRouter()
 TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
-UPLOAD_DIR = Path(__file__).resolve().parents[1] / "static" / "uploads"
+
+# On Lambda the project dir is read-only; use /tmp for uploads
+if os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    UPLOAD_DIR = Path("/tmp/uploads")
+else:
+    UPLOAD_DIR = Path(__file__).resolve().parents[1] / "static" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 

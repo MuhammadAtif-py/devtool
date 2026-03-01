@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 static/uploads/*
 !static/uploads/.gitkeep
+.aws-sam/
+.package/
+samconfig.toml

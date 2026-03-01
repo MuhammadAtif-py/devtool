@@ -3,6 +3,7 @@ from pathlib import Path
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
+import sqlparse
 from csscompressor import compress
 from fastapi import APIRouter, Form, Request
 from fastapi.templating import Jinja2Templates
@@ -74,3 +75,23 @@ async def xml_beautifier_post(request: Request, input_text: str = Form("")):
     except Exception as exc:
         result = f"Error: {exc}"
     return templates.TemplateResponse("tools/xml_beautifier.html", {"request": request, "input_text": input_text, "result": result})
+
+
+@router.get("/sql-formatter")
+async def sql_formatter_get(request: Request):
+    return templates.TemplateResponse("tools/sql_formatter.html", {"request": request, "input_text": "", "result": ""})
+
+
+@router.post("/sql-formatter")
+async def sql_formatter_post(request: Request, input_text: str = Form("")):
+    try:
+        result = sqlparse.format(
+            input_text,
+            reindent=True,
+            keyword_case="upper",
+            identifier_case="lower",
+            indent_width=4,
+        )
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/sql_formatter.html", {"request": request, "input_text": input_text, "result": result})

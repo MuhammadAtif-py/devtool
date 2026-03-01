@@ -14,19 +14,20 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#e11d48',
-                        primaryDeep: '#be123c',
-                        electric: '#06b6d4',
-                        violet: '#7c3aed',
-                        appbg: '#0a0a0f',
-                        surface: '#12121a',
-                        elevated: '#1a1a28',
-                        appborder: '#2a2a3d',
-                        textmain: '#f8fafc',
-                        textmuted: '#94a3b8',
-                        success: '#10b981',
-                        danger: '#f43f5e',
-                        warning: '#f59e0b'
+                        primary: '#818cf8',
+                        primaryDeep: '#6366f1',
+                        accent: '#22d3ee',
+                        electric: '#22d3ee',
+                        violet: '#a78bfa',
+                        appbg: '#050508',
+                        surface: '#0a0d14',
+                        elevated: '#12151e',
+                        appborder: '#1e2333',
+                        textmain: '#eef0f6',
+                        textmuted: '#7a8399',
+                        success: '#34d399',
+                        danger: '#fb7185',
+                        warning: '#fbbf24'
                     }
                 }
             }
@@ -34,34 +35,36 @@
     </script>
     <style>
         :root {
-            --bg: #fafafa;
+            --bg: #f8fafc;
             --surface: #ffffff;
             --elevated: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --primary: #e11d48;
-            --primary-deep: #be123c;
-            --electric: #06b6d4;
-            --violet: #7c3aed;
-            --success: #10b981;
-            --danger: #f43f5e;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --primary: #6366f1;
+            --primary-deep: #4f46e5;
+            --accent: #0891b2;
+            --violet: #8b5cf6;
+            --success: #22c55e;
+            --danger: #ef4444;
             --warning: #f59e0b;
+            --primary-glow: rgba(99,102,241,0.15);
         }
         .dark {
-            --bg: #0a0a0f;
-            --surface: #12121a;
-            --elevated: #1a1a28;
-            --border: #2a2a3d;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #e11d48;
-            --primary-deep: #be123c;
-            --electric: #06b6d4;
-            --violet: #7c3aed;
-            --success: #10b981;
-            --danger: #f43f5e;
-            --warning: #f59e0b;
+            --bg: #050508;
+            --surface: #0a0d14;
+            --elevated: #12151e;
+            --border: #1e2333;
+            --text-main: #eef0f6;
+            --text-muted: #7a8399;
+            --primary: #818cf8;
+            --primary-deep: #6366f1;
+            --accent: #22d3ee;
+            --violet: #a78bfa;
+            --success: #34d399;
+            --danger: #fb7185;
+            --warning: #fbbf24;
+            --primary-glow: rgba(129,140,248,0.15);
         }
         * { box-sizing: border-box; }
         html, body { margin: 0; }
@@ -81,12 +84,14 @@
         .app-border { border-color: var(--border); }
         .muted { color: var(--text-muted); }
         .frosted {
-            background: color-mix(in srgb, var(--surface) 76%, transparent);
-            backdrop-filter: blur(12px);
+            background: color-mix(in srgb, var(--surface) 78%, transparent);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
         }
         .gradient-border-line {
             height: 1px;
-            background: linear-gradient(90deg, var(--primary), transparent 80%);
+            background: linear-gradient(90deg, var(--primary), var(--accent), transparent 80%);
+            opacity: 0.6;
         }
         .mobile-drawer {
             max-height: 0;
@@ -104,19 +109,28 @@
             bottom: -4px;
             width: 0;
             height: 2px;
-            background: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 1px;
             transition: width .25s ease;
         }
         .nav-underline:hover::after { width: 100%; }
         .tool-card {
             transform: translateY(0);
-            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-            will-change: transform, opacity;
+            transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1), border-color .25s ease;
+            will-change: transform;
+            background-image: linear-gradient(155deg, color-mix(in srgb, var(--elevated) 55%, var(--surface) 45%), var(--surface));
         }
         .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 0 20px #e11d4840;
-            border-color: var(--primary);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,.25), 0 0 0 1px color-mix(in srgb, var(--primary) 30%, transparent);
+            border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+        }
+        .tool-card-3d {
+            transform-style: preserve-3d;
+        }
+        .tool-card-3d:hover {
+            transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateY(-6px);
+            box-shadow: 0 24px 48px rgba(0,0,0,.3), 0 0 30px var(--primary-glow);
         }
         .reveal {
             opacity: 0;
@@ -148,10 +162,10 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(circle at 20% 30%, rgba(225, 29, 72, .26), transparent 35%),
-                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, .20), transparent 38%),
-                radial-gradient(circle at 50% 80%, rgba(124, 58, 237, .22), transparent 42%);
-            animation: meshMove 12s ease-in-out infinite alternate;
+                radial-gradient(circle at 18% 28%, rgba(99,102,241,.18), transparent 32%),
+                radial-gradient(circle at 82% 18%, rgba(34,211,238,.12), transparent 35%),
+                radial-gradient(circle at 55% 82%, rgba(139,92,246,.15), transparent 38%);
+            animation: meshMove 14s ease-in-out infinite alternate;
         }
         .dot-overlay {
             position: absolute;
@@ -172,29 +186,31 @@
             opacity: .22;
             animation: floatBlob 9s ease-in-out infinite;
         }
-        .particles::before { background: #e11d48; top: 12%; left: 10%; }
-        .particles::after { background: #06b6d4; bottom: 14%; right: 8%; animation-delay: 2s; }
+        .particles::before { background: #818cf8; top: 12%; left: 10%; }
+        .particles::after { background: #22d3ee; bottom: 14%; right: 8%; animation-delay: 2.5s; }
         .btn-gradient {
-            background-size: 150% 150%;
-            background-image: linear-gradient(120deg, var(--primary), var(--violet));
-            transition: transform .2s ease, background-position .2s ease;
+            background: linear-gradient(135deg, var(--primary-deep), var(--violet));
+            background-size: 200% 200%;
+            transition: transform .2s ease, box-shadow .2s ease, background-position .3s ease;
         }
         .btn-gradient:hover {
-            transform: scale(1.03);
+            transform: scale(1.02) translateY(-1px);
             background-position: 100% 0;
+            box-shadow: 0 12px 32px color-mix(in srgb, var(--primary-deep) 40%, transparent);
         }
         .category-pill {
             position: relative;
             overflow: hidden;
             isolation: isolate;
+            transition: color .25s ease, border-color .25s ease, box-shadow .25s ease;
         }
         .category-pill::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(120deg, var(--primary), var(--violet));
+            background: linear-gradient(135deg, var(--primary-deep), var(--violet));
             transform: translateX(-102%);
-            transition: transform .26s ease;
+            transition: transform .28s cubic-bezier(.4,0,.2,1);
             z-index: -1;
         }
         .category-pill:hover::before,
@@ -205,6 +221,7 @@
         .category-pill.active {
             color: #fff;
             border-color: transparent;
+            box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-deep) 25%, transparent);
         }
         .toast {
             position: fixed;
@@ -229,7 +246,7 @@
         }
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
-        .toast.info { border-color: var(--electric); }
+        .toast.info { border-color: var(--accent); }
         .loader {
             width: 16px;
             height: 16px;
@@ -242,7 +259,7 @@
         .focus-glow:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px #e11d48;
+            box-shadow: 0 0 0 3px var(--primary-glow);
         }
         .shake { animation: shake .35s ease; }
         .navbar-slide { animation: navSlide .4s ease-out; }
@@ -266,6 +283,67 @@
             font-size: 14px;
             line-height: 1.5rem;
         }
+        .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+        /* Subtle scrollbar for textareas */
+        textarea::-webkit-scrollbar { width: 6px; }
+        textarea::-webkit-scrollbar-track { background: transparent; }
+        textarea::-webkit-scrollbar-thumb { background: #2a2a3d; border-radius: 3px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #3a3a5d; }
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        /* NEW badge */
+        .badge-new {
+            background: linear-gradient(135deg, var(--success), #059669);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 999px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        /* Keyboard shortcut badge */
+        .kbd {
+            font-size: 11px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--elevated);
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+        }
+        /* Tool icon for tool pages */
+        .tool-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--primary-deep), var(--violet));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 0 20px var(--primary-glow);
+            flex-shrink: 0;
+        }
+        /* Line clamp utility */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col transition-colors duration-300">
@@ -282,7 +360,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="h-16 flex items-center gap-3">
                 <a href="/" class="shrink-0 flex items-center gap-2">
-                    <span class="size-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_18px_#e11d4840]">
+                    <span class="size-8 rounded-full bg-primaryDeep flex items-center justify-center shadow-[0_0_18px_rgba(99,102,241,0.3)]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="size-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25" />
                         </svg>
@@ -290,21 +368,14 @@
                     <span class="font-extrabold tracking-tight text-lg">DevTools</span>
                 </a>
 
-                <div class="hidden md:flex flex-1 justify-center px-3">
-                    <div class="w-full max-w-xl relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 muted">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 6 6a7.5 7.5 0 0 0 10.65 10.65Z" />
-                            </svg>
-                        </span>
-                        <input id="globalToolSearch" type="search" placeholder="Search tools..." class="w-full h-10 pl-9 pr-3 rounded-xl border app-border app-surface text-sm focus-glow">
-                    </div>
-                </div>
+                <div class="hidden md:block flex-1"></div>
 
                 <div class="hidden lg:flex items-center gap-4 text-sm">
                     <a href="/#formatters" class="nav-underline muted hover:text-[var(--text-main)]">Formatters</a>
                     <a href="/#converters" class="nav-underline muted hover:text-[var(--text-main)]">Converters</a>
                     <a href="/#generators" class="nav-underline muted hover:text-[var(--text-main)]">Generators</a>
+                    <a href="/#network" class="nav-underline muted hover:text-[var(--text-main)]">Network</a>
+                    <a href="/#text" class="nav-underline muted hover:text-[var(--text-main)]">Text</a>
                 </div>
 
                 <div class="ml-auto flex items-center gap-2">
@@ -366,17 +437,25 @@
                 </ul>
             </div>
             <div>
-                <h3 class="font-semibold text-base mb-3">Quick Links</h3>
+                <h3 class="font-semibold text-base mb-3">Popular Tools</h3>
                 <ul class="space-y-2 muted">
-                    <li><a href="/" class="hover:text-[var(--text-main)]">Home</a></li>
                     <li><a href="/formatters/json-formatter" class="hover:text-[var(--text-main)]">JSON Formatter</a></li>
-                    <li><a href="/formatters/xml-beautifier" class="hover:text-[var(--text-main)]">XML Beautifier</a></li>
-                    <li><a href="https://github.com" target="_blank" rel="noreferrer" class="hover:text-[var(--text-main)]">GitHub</a></li>
+                    <li><a href="/formatters/sql-formatter" class="hover:text-[var(--text-main)]">SQL Formatter</a></li>
+                    <li><a href="/converters/base64" class="hover:text-[var(--text-main)]">Base64 Encoder</a></li>
+                    <li><a href="/generators/jwt-decoder" class="hover:text-[var(--text-main)]">JWT Decoder</a></li>
+                    <li><a href="/text-tools/diff-checker" class="hover:text-[var(--text-main)]">Diff Checker</a></li>
+                    <li><a href="/text-tools/case-converter" class="hover:text-[var(--text-main)]">Case Converter</a></li>
                 </ul>
             </div>
             <div>
                 <h3 class="font-semibold text-base mb-3">About</h3>
-                <p class="muted leading-6">A modern suite of free tools for developers. No signup, no limits, just fast utility workflows.</p>
+                <p class="muted leading-6">Modern utility suite for developers.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs px-2 py-1 rounded-full border app-border muted">FastAPI</span>
+                    <span class="text-xs px-2 py-1 rounded-full border app-border muted">Tailwind CSS</span>
+                    <span class="text-xs px-2 py-1 rounded-full border app-border muted">Jinja2</span>
+                    <span class="text-xs px-2 py-1 rounded-full border app-border muted">Python</span>
+                </div>
             </div>
         </div>
         <div class="border-t app-border/80">
@@ -402,7 +481,6 @@
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const mobileDrawer = document.getElementById('mobile-drawer');
         const burger = document.getElementById('burger');
-        const searchDesktop = document.getElementById('globalToolSearch');
         const searchMobile = document.getElementById('globalToolSearchMobile');
 
         function darkModeToggle() {
@@ -600,23 +678,9 @@
         }
 
         function hookSearchInputs() {
-            const relay = (value) => {
-                filterTools(value);
-            };
-            if (searchDesktop) {
-                searchDesktop.addEventListener('input', (event) => {
-                    relay(event.target.value);
-                    if (searchMobile && searchMobile.value !== event.target.value) {
-                        searchMobile.value = event.target.value;
-                    }
-                });
-            }
             if (searchMobile) {
                 searchMobile.addEventListener('input', (event) => {
-                    relay(event.target.value);
-                    if (searchDesktop && searchDesktop.value !== event.target.value) {
-                        searchDesktop.value = event.target.value;
-                    }
+                    filterTools(event.target.value);
                 });
             }
         }

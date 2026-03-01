@@ -1,7 +1,9 @@
+import difflib
 import html
 from pathlib import Path
 import re
 
+from slugify import slugify
 from fastapi import APIRouter, Form, Request
 from fastapi.templating import Jinja2Templates
 
@@ -108,3 +110,112 @@ async def regex_tester_post(
             "ignore_case": ignore_case,
         },
     )
+
+
+# --- Text Case Converter ---
+def _to_camel(text: str) -> str:
+    words = re.findall(r"[a-zA-Z0-9]+", text)
+    if not words:
+        return text
+    return words[0].lower() + "".join(w.capitalize() for w in words[1:])
+
+
+def _to_pascal(text: str) -> str:
+    words = re.findall(r"[a-zA-Z0-9]+", text)
+    return "".join(w.capitalize() for w in words)
+
+
+def _to_snake(text: str) -> str:
+    words = re.findall(r"[a-zA-Z0-9]+", text)
+    return "_".join(w.lower() for w in words)
+
+
+def _to_kebab(text: str) -> str:
+    words = re.findall(r"[a-zA-Z0-9]+", text)
+    return "-".join(w.lower() for w in words)
+
+
+def _to_constant(text: str) -> str:
+    words = re.findall(r"[a-zA-Z0-9]+", text)
+    return "_".join(w.upper() for w in words)
+
+
+CASE_FUNCTIONS = {
+    "upper": str.upper,
+    "lower": str.lower,
+    "title": str.title,
+    "capitalize": lambda t: t.capitalize(),
+    "camel": _to_camel,
+    "pascal": _to_pascal,
+    "snake": _to_snake,
+    "kebab": _to_kebab,
+    "constant": _to_constant,
+    "reverse": lambda t: t[::-1],
+}
+
+
+@router.get("/case-converter")
+async def case_converter_get(request: Request):
+    return templates.TemplateResponse("tools/case_converter.html", {"request": request, "input_text": "", "case_type": "upper", "result": ""})
+
+
+@router.post("/case-converter")
+async def case_converter_post(request: Request, input_text: str = Form(""), case_type: str = Form("upper")):
+    try:
+        func = CASE_FUNCTIONS.get(case_type, str.upper)
+        result = func(input_text)
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/case_converter.html", {"request": request, "input_text": input_text, "case_type": case_type, "result": result})
+
+
+# --- Text Diff Checker ---
+@router.get("/diff-checker")
+async def diff_checker_get(request: Request):
+    return templates.TemplateResponse("tools/diff_checker.html", {"request": request, "text_a": "", "text_b": "", "result": "", "diff_html": ""})
+
+
+@router.post("/diff-checker")
+async def diff_checker_post(request: Request, text_a: str = Form(""), text_b: str = Form("")):
+    diff_html = ""
+    try:
+        lines_a = text_a.splitlines(keepends=True)
+        lines_b = text_b.splitlines(keepends=True)
+        diff = difflib.unified_diff(lines_a, lines_b, fromfile="Text A", tofile="Text B", lineterm="")
+        diff_list = list(diff)
+        if diff_list:
+            result = "\n".join(diff_list)
+            html_lines = []
+            for line in diff_list:
+                escaped = html.escape(line)
+                if line.startswith("+++") or line.startswith("---"):
+                    html_lines.append(f"<div class='text-[#94a3b8] font-bold'>{escaped}</div>")
+                elif line.startswith("@@"):
+                    html_lines.append(f"<div class='text-[#06b6d4]'>{escaped}</div>")
+                elif line.startswith("+"):
+                    html_lines.append(f"<div class='bg-emerald-500/15 text-[#10b981]'>{escaped}</div>")
+                elif line.startswith("-"):
+                    html_lines.append(f"<div class='bg-rose-500/15 text-[#f43f5e]'>{escaped}</div>")
+                else:
+                    html_lines.append(f"<div class='text-[#94a3b8]'>{escaped}</div>")
+            diff_html = "".join(html_lines)
+        else:
+            result = "No differences found. The texts are identical."
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/diff_checker.html", {"request": request, "text_a": text_a, "text_b": text_b, "result": result, "diff_html": diff_html})
+
+
+# --- Slug Generator ---
+@router.get("/slug-generator")
+async def slug_generator_get(request: Request):
+    return templates.TemplateResponse("tools/slug_generator.html", {"request": request, "input_text": "", "result": ""})
+
+
+@router.post("/slug-generator")
+async def slug_generator_post(request: Request, input_text: str = Form("")):
+    try:
+        result = slugify(input_text, lowercase=True)
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/slug_generator.html", {"request": request, "input_text": input_text, "result": result})

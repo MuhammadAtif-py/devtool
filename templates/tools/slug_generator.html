@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Slug Generator{% endblock %}
+
+{% block content %}
+<section class="space-y-6" data-tool-page>
+    <nav class="text-sm muted flex items-center gap-2">
+        <a href="/" class="hover:text-[var(--text-main)]">Home</a>
+        <span>›</span>
+        <span>Text</span>
+        <span>›</span>
+        <span class="text-[var(--text-main)]">Slug Generator</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+        <div class="flex items-start gap-4">
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">Slug Generator</h1>
+                <p class="muted mt-1">Create clean, URL-friendly slugs from any text. Handles unicode, special characters, and spaces.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <a href="/" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">← Back</a>
+        </div>
+    </div>
+
+    <form method="post" class="space-y-5" onsubmit="formLoadingState('slug-submit-btn')">
+        <div class="rounded-2xl border app-border app-surface overflow-hidden" data-scroll-reveal>
+            <header class="px-4 py-3 border-b app-border border-t-2 border-t-primary flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold">Input Text</h2>
+                    <p class="text-xs muted">Enter a title, heading, or any text</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="pasteFromClipboard('slug-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Paste</button>
+                    <button type="button" onclick="clearInput('slug-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Clear</button>
+                </div>
+            </header>
+            <div class="p-5 space-y-4">
+                <input type="text" id="slug-input" name="input_text" value="{{ input_text }}" placeholder="e.g. My Amazing Blog Post Title! 🚀" class="w-full h-12 px-4 rounded-xl border app-border app-elevated mono-area text-lg focus-glow">
+
+                {% if result %}
+                {% set is_error = result.startswith('Error:') %}
+                <div class="rounded-xl border {{ 'border-danger' if is_error else 'border-success' }} p-4 app-elevated">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-sm font-semibold {{ 'text-danger' if is_error else 'text-success' }}">{{ 'Error' if is_error else 'Generated Slug' }}</p>
+                        {% if not is_error %}
+                        <button type="button" onclick="copyToClipboard('slug-result')" class="px-3 py-1 text-xs rounded-lg border app-border hover:border-primary">Copy</button>
+                        {% endif %}
+                    </div>
+                    <p id="slug-result" class="mono-area text-lg font-bold break-all select-all">{{ result }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <button id="slug-submit-btn" type="submit" class="btn-gradient w-full sm:w-auto min-w-[220px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold">
+                <span>Generate Slug</span>
+                <span class="hidden tool-loading-spinner loader"></span>
+            </button>
+        </div>
+    </form>
+
+    <section>
+        <h3 class="text-lg font-semibold border-l-4 border-primary pl-3 mb-4">You might also like</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/text-tools/case-converter" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Case Converter</p><p class="text-sm muted mt-1">Convert text between cases.</p></a>
+            <a href="/converters/url-codec" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">URL Encoder</p><p class="text-sm muted mt-1">Encode and decode URLs.</p></a>
+            <a href="/generators/meta-generator" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Meta Tag Generator</p><p class="text-sm muted mt-1">Generate SEO meta tags.</p></a>
+        </div>
+    </section>
+</section>
+{% endblock %}

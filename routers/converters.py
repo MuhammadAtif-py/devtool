@@ -1,10 +1,13 @@
 import base64
+import csv
+import io
 import json
 from pathlib import Path
 import re
 from datetime import datetime
 from urllib.parse import quote, unquote
 
+import markdown as md_lib
 import yaml
 from fastapi import APIRouter, Form, Request
 from fastapi.templating import Jinja2Templates
@@ -138,3 +141,76 @@ async def color_picker_post(request: Request, input_text: str = Form(""), mode: 
     except Exception as exc:
         result = f"Error: {exc}"
     return templates.TemplateResponse("tools/color_picker.html", {"request": request, "input_text": input_text, "result": result, "mode": mode})
+
+
+# --- Markdown to HTML ---
+@router.get("/markdown-html")
+async def markdown_html_get(request: Request):
+    return templates.TemplateResponse("tools/markdown_html.html", {"request": request, "input_text": "", "result": ""})
+
+
+@router.post("/markdown-html")
+async def markdown_html_post(request: Request, input_text: str = Form("")):
+    try:
+        result = md_lib.markdown(input_text, extensions=["fenced_code", "tables", "toc", "nl2br"])
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/markdown_html.html", {"request": request, "input_text": input_text, "result": result})
+
+
+# --- Number Base Converter ---
+@router.get("/number-base")
+async def number_base_get(request: Request):
+    return templates.TemplateResponse("tools/number_base.html", {"request": request, "input_text": "", "from_base": "10", "to_base": "2", "result": ""})
+
+
+@router.post("/number-base")
+async def number_base_post(request: Request, input_text: str = Form(""), from_base: str = Form("10"), to_base: str = Form("2")):
+    try:
+        value = input_text.strip()
+        fb = int(from_base)
+        tb = int(to_base)
+        if fb not in (2, 8, 10, 16) or tb not in (2, 8, 10, 16):
+            raise ValueError("Supported bases: 2, 8, 10, 16")
+        decimal_val = int(value, fb)
+        if tb == 2:
+            result = bin(decimal_val)[2:]
+        elif tb == 8:
+            result = oct(decimal_val)[2:]
+        elif tb == 16:
+            result = hex(decimal_val)[2:].upper()
+        else:
+            result = str(decimal_val)
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/number_base.html", {"request": request, "input_text": input_text, "from_base": from_base, "to_base": to_base, "result": result})
+
+
+# --- JSON to CSV ---
+@router.get("/json-csv")
+async def json_csv_get(request: Request):
+    return templates.TemplateResponse("tools/json_csv.html", {"request": request, "input_text": "", "result": ""})
+
+
+@router.post("/json-csv")
+async def json_csv_post(request: Request, input_text: str = Form("")):
+    try:
+        data = json.loads(input_text)
+        if not isinstance(data, list) or not data:
+            raise ValueError("Input must be a non-empty JSON array of objects")
+        if not all(isinstance(row, dict) for row in data):
+            raise ValueError("Each element must be a JSON object")
+        output = io.StringIO()
+        fieldnames = []
+        for row in data:
+            for key in row.keys():
+                if key not in fieldnames:
+                    fieldnames.append(key)
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+        result = output.getvalue()
+    except Exception as exc:
+        result = f"Error: {exc}"
+    return templates.TemplateResponse("tools/json_csv.html", {"request": request, "input_text": input_text, "result": result})

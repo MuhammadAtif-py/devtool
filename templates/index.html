@@ -1,94 +1,93 @@
 {% extends "base.html" %}
 
-{% block title %}Developer Tools. Fast. Free. No Login.{% endblock %}
+{% block title %}Developer Utility Toolkit{% endblock %}
 
 {% block content %}
-<section class="relative min-h-[88vh] flex items-center overflow-hidden rounded-3xl border app-border app-surface">
+<!-- Hero Header -->
+<section class="relative rounded-2xl border app-border app-surface overflow-hidden">
     <div class="mesh-bg"></div>
     <div class="dot-overlay"></div>
-    <div class="particles absolute inset-0"></div>
-    <div class="relative z-10 w-full px-6 sm:px-10 lg:px-16 py-12 text-center lg:text-left">
-        <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs border app-border app-elevated mb-5 reveal">
-            <span class="size-2 rounded-full bg-[#06b6d4]"></span>
-            21 free tools • no setup
-        </p>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4">
-            <span class="hero-typing">Build Faster with Free Dev Tools</span>
-        </h1>
-        <p class="max-w-2xl mx-auto lg:mx-0 muted text-base sm:text-lg reveal">21 free tools. No signup. No limits. Just build.</p>
-        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start reveal">
-            <a href="#tools" class="btn-gradient inline-flex items-center justify-center px-6 py-3 rounded-xl text-white font-semibold">Explore Tools</a>
-            <a href="https://github.com" target="_blank" rel="noreferrer" class="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-primary text-primary hover:bg-primary hover:text-white transition">View on GitHub</a>
-        </div>
-        <a href="#stats" class="mt-10 inline-flex items-center justify-center text-sm muted bounce-arrow">↓ Scroll</a>
-    </div>
-</section>
-
-<section id="stats" class="mt-8 rounded-2xl border app-border app-elevated py-6 px-4 sm:px-6">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-        <div class="reveal">
-            <div class="text-primary text-xl">🧰</div>
-            <p class="text-2xl font-bold" data-count-to="21" data-count-suffix="+">0+</p>
-            <p class="text-xs muted mt-1">Tools</p>
-        </div>
-        <div class="reveal" style="transition-delay:.06s">
-            <div class="text-primary text-xl">💎</div>
-            <p class="text-2xl font-bold" data-count-to="100" data-count-suffix="%">0%</p>
-            <p class="text-xs muted mt-1">Free</p>
-        </div>
-        <div class="reveal" style="transition-delay:.12s">
-            <div class="text-primary text-xl">🔓</div>
-            <p class="text-2xl font-bold" data-count-to="0" data-count-suffix="">0</p>
-            <p class="text-xs muted mt-1">Login Required</p>
-        </div>
-        <div class="reveal" style="transition-delay:.18s">
-            <div class="text-primary text-xl">🌙</div>
-            <p class="text-2xl font-bold" data-count-to="1" data-count-suffix="">0</p>
-            <p class="text-xs muted mt-1">Dark Mode Default</p>
+    <div class="relative z-10 p-6 sm:p-8">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    <span class="gradient-text">Developer Utility</span> Toolkit
+                </h1>
+                <p class="muted mt-2 text-sm">30+ free, open-source tools for everyday development.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 muted pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 6 6a7.5 7.5 0 0 0 10.65 10.65Z"/></svg>
+                    </span>
+                    <input id="inlineToolSearch" type="search" placeholder="Search tools..." class="w-full sm:w-80 h-10 pl-9 pr-16 rounded-xl border app-border app-elevated text-sm focus-glow" autocomplete="off">
+                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
+                        <span class="kbd">Ctrl</span><span class="kbd">K</span>
+                    </span>
+                </div>
+                <a href="https://github.com" target="_blank" rel="noreferrer" class="h-10 px-3.5 rounded-xl border app-border app-elevated hover:border-primary transition text-sm inline-flex items-center gap-2 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M12 2a10 10 0 0 0-3.162 19.486c.5.093.682-.217.682-.48 0-.237-.009-.866-.014-1.7-2.776.603-3.362-1.338-3.362-1.338-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.068-.608.068-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.528 2.341 1.087 2.91.832.09-.646.35-1.087.636-1.337-2.217-.252-4.55-1.109-4.55-4.937 0-1.09.39-1.981 1.028-2.678-.103-.253-.446-1.268.098-2.644 0 0 .84-.269 2.75 1.023A9.56 9.56 0 0 1 12 6.844c.85.004 1.706.115 2.505.337 1.909-1.292 2.748-1.023 2.748-1.023.545 1.376.202 2.391.1 2.644.64.697 1.027 1.589 1.027 2.678 0 3.837-2.337 4.682-4.56 4.93.359.31.679.92.679 1.855 0 1.338-.012 2.417-.012 2.745 0 .266.18.577.688.479A10 10 0 0 0 12 2Z" clip-rule="evenodd"/></svg>
+                    <span class="hidden sm:inline">GitHub</span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
-<section id="tools" class="mt-8 space-y-5">
-    <div class="overflow-x-auto">
+<!-- Category Filter & Tool Grid -->
+<section id="tools" class="mt-6 space-y-6">
+    <!-- Category Pills -->
+    <div class="overflow-x-auto scrollbar-hide">
         <div class="flex gap-2 min-w-max">
-            <button data-category-tab="all" onclick="filterByCategory('all')" class="category-pill active px-4 py-2 rounded-full border app-border app-surface text-sm">All</button>
-            <button data-category-tab="formatters" onclick="filterByCategory('formatters')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Formatters</button>
-            <button data-category-tab="converters" onclick="filterByCategory('converters')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Converters</button>
-            <button data-category-tab="generators" onclick="filterByCategory('generators')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Generators</button>
-            <button data-category-tab="network" onclick="filterByCategory('network')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Network</button>
-            <button data-category-tab="image" onclick="filterByCategory('image')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Image</button>
-            <button data-category-tab="text" onclick="filterByCategory('text')" class="category-pill px-4 py-2 rounded-full border app-border app-surface text-sm">Text</button>
+            <button data-category-tab="all" onclick="filterByCategory('all')" class="category-pill active px-4 py-2 rounded-full border app-border app-elevated text-sm font-medium whitespace-nowrap">All <span class="ml-1 text-xs opacity-60" id="totalToolCount"></span></button>
+            {% for category in categories %}
+            <button data-category-tab="{{ category|lower }}" onclick="filterByCategory('{{ category|lower }}')" class="category-pill px-4 py-2 rounded-full border app-border app-elevated text-sm whitespace-nowrap">{{ category }} <span class="ml-1 text-xs opacity-60">{{ categories[category]|length }}</span></button>
+            {% endfor %}
         </div>
     </div>
 
+    <!-- No Results -->
+    <div id="noResultsMessage" class="hidden text-center py-16 rounded-2xl border app-border app-surface">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 mx-auto muted mb-3"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+        <p class="text-lg font-semibold">No tools found</p>
+        <p class="muted text-sm mt-1">Try a different search term.</p>
+        <button type="button" onclick="document.getElementById('inlineToolSearch').value='';filterTools('');updateVisibleCount();" class="mt-4 px-4 py-2 rounded-xl border app-border hover:border-primary text-sm transition">Clear search</button>
+    </div>
+
+    <!-- Tool Category Sections -->
     {% for category, tools in categories.items() %}
-    <section id="{{ category|lower }}" class="space-y-3">
-        <h2 class="title-reveal text-xl sm:text-2xl font-bold pl-3 border-l-4 border-primary">{{ category }}</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    {% set cl = category|lower %}
+    <section id="{{ cl }}" data-category-section="{{ cl }}" class="space-y-4">
+        <h2 class="title-reveal text-lg font-semibold pl-3 border-l-[3px] flex items-center gap-3
+            {% if cl == 'formatters' %}border-l-primary{% elif cl == 'converters' %}border-l-accent{% elif cl == 'generators' %}border-l-violet{% elif cl == 'network' %}border-l-emerald-400{% elif cl == 'image' %}border-l-amber-400{% else %}border-l-rose-400{% endif %}">
+            {{ category }}
+            <span class="text-[11px] font-normal px-2.5 py-0.5 rounded-full border app-border muted">{{ tools|length }}</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {% for tool in tools %}
-            {% set category_lower = category|lower %}
             <a href="{{ tool.path }}"
                data-tool-card
-               data-category="{{ category_lower }}"
+               data-category="{{ cl }}"
                data-tool-name="{{ tool.name }}"
                data-tool-desc="{{ tool.description }}"
-               class="tool-card reveal relative rounded-2xl border app-border app-surface p-5 flex flex-col gap-4">
-                {% if tool.name == 'XML Beautifier & Validator' %}
-                <span class="absolute top-3 right-3 text-[10px] px-2 py-1 rounded-full bg-primary text-white">New</span>
-                {% endif %}
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl
-                        {% if category_lower == 'formatters' %}text-primary{% elif category_lower == 'converters' %}text-electric{% elif category_lower == 'generators' %}text-violet{% elif category_lower == 'network' %}text-emerald-400{% elif category_lower == 'image' %}text-amber-400{% else %}text-cyan-300{% endif %}">{{ tool.icon }}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="size-4 muted"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" /></svg>
+               class="tool-card tool-card-3d reveal relative group rounded-2xl border app-border app-surface p-5 flex flex-col gap-3 overflow-hidden">
+                <!-- Ambient glow blob -->
+                <div class="absolute -top-8 -right-8 size-24 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500
+                    {% if cl == 'formatters' %}bg-primary{% elif cl == 'converters' %}bg-accent{% elif cl == 'generators' %}bg-violet{% elif cl == 'network' %}bg-emerald-400{% elif cl == 'image' %}bg-amber-400{% else %}bg-rose-400{% endif %}"></div>
+                <!-- Top row -->
+                <div class="relative z-10 flex items-center gap-2">
+                    <span class="size-2.5 rounded-full
+                        {% if cl == 'formatters' %}bg-primary{% elif cl == 'converters' %}bg-accent{% elif cl == 'generators' %}bg-violet{% elif cl == 'network' %}bg-emerald-400{% elif cl == 'image' %}bg-amber-400{% else %}bg-rose-400{% endif %}"></span>
+                    <span class="text-xs muted">{{ category }}</span>
+                    {% if tool.get('new', false) %}
+                    <span class="badge-new ml-1">New</span>
+                    {% endif %}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="size-4 muted ml-auto transition-all duration-200 group-hover:translate-x-1 group-hover:text-[var(--primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/></svg>
                 </div>
-                <div>
-                    <h3 class="font-semibold text-base leading-tight">{{ tool.name }}</h3>
-                    <p class="mt-2 text-sm muted">{{ tool.description }}</p>
-                </div>
-                <div class="mt-auto flex items-center justify-between text-xs">
-                    <span class="px-2.5 py-1 rounded-full border app-border app-elevated">{{ category }}</span>
-                    <span class="muted">Open</span>
+                <!-- Name + Description -->
+                <div class="relative z-10 flex-1">
+                    <h3 class="font-semibold text-[15px] leading-tight">{{ tool.name }}</h3>
+                    <p class="muted text-xs mt-1.5 line-clamp-2">{{ tool.description }}</p>
                 </div>
             </a>
             {% endfor %}
@@ -96,4 +95,47 @@
     </section>
     {% endfor %}
 </section>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    const inlineSearch = document.getElementById('inlineToolSearch');
+    const noResults = document.getElementById('noResultsMessage');
+    const allCards = document.querySelectorAll('[data-tool-card]');
+    const totalEl = document.getElementById('totalToolCount');
+    if (totalEl) totalEl.textContent = allCards.length;
+
+    function updateVisibleCount() {
+        let visible = 0;
+        allCards.forEach(c => { if (c.style.display !== 'none') visible++; });
+        if (noResults) noResults.classList.toggle('hidden', visible > 0);
+        document.querySelectorAll('[data-category-section]').forEach(section => {
+            const vis = section.querySelectorAll('[data-tool-card]:not([style*="display: none"])');
+            section.style.display = vis.length ? '' : 'none';
+        });
+    }
+
+    if (inlineSearch) {
+        inlineSearch.addEventListener('input', (e) => {
+            filterTools((e.target.value || '').trim().toLowerCase());
+            updateVisibleCount();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            if (inlineSearch) { inlineSearch.focus(); inlineSearch.select(); }
+        }
+    });
+
+    const _baseFilterByCategory = filterByCategory;
+    filterByCategory = function(category) {
+        _baseFilterByCategory(category);
+        if (inlineSearch) inlineSearch.value = '';
+        setTimeout(updateVisibleCount, 10);
+    };
+
+    updateVisibleCount();
+</script>
 {% endblock %}

@@ -13,7 +13,7 @@
 
     <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
         <div class="flex items-start gap-4">
-            <div class="size-12 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#7c3aed] text-white flex items-center justify-center text-xl shadow-[0_0_22px_#e11d4840]">🧾</div>
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold">JSON Formatter & Validator</h1>
                 <p class="muted mt-1">Beautify JSON and validate structure instantly.</p>
@@ -21,7 +21,7 @@
         </div>
         <div class="flex items-center gap-3 text-sm">
             <button type="button" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">Share</button>
-            <a href="mailto:support@example.com?subject=Bug%20Report%20-%20JSON%20Formatter" class="text-[#06b6d4] hover:text-[#7c3aed]">Report bug</a>
+            <a href="mailto:support@example.com?subject=Bug%20Report%20-%20JSON%20Formatter" class="text-accent hover:text-primary transition">Report bug</a>
         </div>
     </div>
 
@@ -48,8 +48,8 @@
             </section>
 
             {% set is_error = result.startswith('Error:') if result else false %}
-            <section class="rounded-2xl border {{ 'border-[#f43f5e]' if is_error else 'border-[#10b981]' if result else 'app-border' }} app-surface overflow-hidden flex flex-col min-h-[470px]">
-                <header class="px-4 py-3 border-b app-border border-t-2 {{ 'border-t-[#f43f5e]' if is_error else 'border-t-[#10b981]' if result else 'border-t-primary' }} flex items-center justify-between">
+            <section class="rounded-2xl border {{ 'border-danger' if is_error else 'border-success' if result else 'app-border' }} app-surface overflow-hidden flex flex-col min-h-[470px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 {{ 'border-t-danger' if is_error else 'border-t-success' if result else 'border-t-primary' }} flex items-center justify-between">
                     <div>
                         <h2 class="font-semibold">Output</h2>
                         <p class="text-xs muted">Formatted JSON or validation error</p>
@@ -66,9 +66,9 @@
                         <textarea id="json-output" readonly data-linenumbers="json-output-lines" class="absolute inset-0 w-full h-full pl-14 pr-4 py-3 bg-transparent mono-area text-[#f8fafc] resize-none outline-none">{{ result }}</textarea>
                     </div>
                     {% if is_error %}
-                    <p class="mt-2 text-xs text-[#f43f5e]">Invalid JSON detected. Check commas, quotes, or brackets.</p>
+                    <p class="mt-2 text-xs text-danger">Invalid JSON detected. Check commas, quotes, or brackets.</p>
                     {% elif result %}
-                    <p class="mt-2 text-xs text-[#10b981]">JSON validated successfully.</p>
+                    <p class="mt-2 text-xs text-success">JSON validated successfully.</p>
                     {% else %}
                     <p class="mt-2 text-xs muted">Formatted output appears here.</p>
                     {% endif %}

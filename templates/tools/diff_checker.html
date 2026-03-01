@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Text Diff Checker{% endblock %}
+
+{% block content %}
+<section class="space-y-6" data-tool-page>
+    <nav class="text-sm muted flex items-center gap-2">
+        <a href="/" class="hover:text-[var(--text-main)]">Home</a>
+        <span>›</span>
+        <span>Text</span>
+        <span>›</span>
+        <span class="text-[var(--text-main)]">Diff Checker</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+        <div class="flex items-start gap-4">
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">Text Diff Checker</h1>
+                <p class="muted mt-1">Compare two blocks of text side-by-side and see exact differences highlighted.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <a href="/" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">← Back</a>
+        </div>
+    </div>
+
+    <form method="post" class="space-y-5" onsubmit="formLoadingState('diff-submit-btn')">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-5" data-scroll-reveal>
+            <section class="rounded-2xl border app-border app-surface overflow-hidden flex flex-col min-h-[400px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 border-t-danger flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold">Text A (Original)</h2>
+                        <p class="text-xs muted">Paste original text</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="pasteFromClipboard('diff-a')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Paste</button>
+                        <button type="button" onclick="clearInput('diff-a')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Clear</button>
+                    </div>
+                </header>
+                <div class="flex-1 p-4">
+                    <div class="relative h-full min-h-[300px] rounded-xl border app-border overflow-hidden bg-[#0d0d14]">
+                        <textarea id="diff-a" name="text_a" spellcheck="false" class="absolute inset-0 w-full h-full px-4 py-3 bg-transparent mono-area text-[#f8fafc] resize-none outline-none" placeholder="Paste your original text here...">{{ text_a }}</textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section class="rounded-2xl border app-border app-surface overflow-hidden flex flex-col min-h-[400px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 border-t-success flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold">Text B (Modified)</h2>
+                        <p class="text-xs muted">Paste modified text</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="pasteFromClipboard('diff-b')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Paste</button>
+                        <button type="button" onclick="clearInput('diff-b')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Clear</button>
+                    </div>
+                </header>
+                <div class="flex-1 p-4">
+                    <div class="relative h-full min-h-[300px] rounded-xl border app-border overflow-hidden bg-[#0d0d14]">
+                        <textarea id="diff-b" name="text_b" spellcheck="false" class="absolute inset-0 w-full h-full px-4 py-3 bg-transparent mono-area text-[#f8fafc] resize-none outline-none" placeholder="Paste your modified text here...">{{ text_b }}</textarea>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="flex justify-center">
+            <button id="diff-submit-btn" type="submit" class="btn-gradient w-full sm:w-auto min-w-[220px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold">
+                <span>Compare Texts</span>
+                <span class="hidden tool-loading-spinner loader"></span>
+            </button>
+        </div>
+
+        {% if diff_html %}
+        <div class="rounded-2xl border border-primary app-surface overflow-hidden" data-scroll-reveal>
+            <header class="px-4 py-3 border-b app-border border-t-2 border-t-primary flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold">Diff Result</h2>
+                    <p class="text-xs muted">Lines prefixed with <span class="text-success">+</span> are additions, <span class="text-danger">-</span> are removals</p>
+                </div>
+                <button type="button" onclick="copyToClipboard('diff-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Copy Raw</button>
+            </header>
+            <div class="p-4">
+                <div class="rounded-xl border app-border bg-[#0d0d14] p-4 mono-area text-sm overflow-x-auto">
+                    {{ diff_html|safe }}
+                </div>
+                <textarea id="diff-output" class="hidden">{{ result }}</textarea>
+            </div>
+        </div>
+        {% elif result %}
+        <div class="rounded-2xl border border-success app-surface p-5 text-center">
+            <p class="text-success font-semibold">{{ result }}</p>
+        </div>
+        {% endif %}
+    </form>
+
+    <section>
+        <h3 class="text-lg font-semibold border-l-4 border-primary pl-3 mb-4">You might also like</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/text-tools/word-counter" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Word Counter</p><p class="text-sm muted mt-1">Count words, characters, and lines.</p></a>
+            <a href="/text-tools/case-converter" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Case Converter</p><p class="text-sm muted mt-1">Convert text between cases.</p></a>
+            <a href="/text-tools/regex-tester" class="tool-card rounded-xl border app-border app-surface p-4"><p class="font-semibold">Regex Tester</p><p class="text-sm muted mt-1">Test regex patterns live.</p></a>
+        </div>
+    </section>
+</section>
+{% endblock %}

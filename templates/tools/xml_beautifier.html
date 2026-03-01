@@ -14,29 +14,29 @@
 
     <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
         <div class="flex items-start gap-4">
-            <div class="size-12 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#7c3aed] text-white flex items-center justify-center shadow-panel text-xl">🧬</div>
+            <div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25"/></svg></div>
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold">XML Beautifier & Validator</h1>
                 <p class="text-[var(--text-muted)] mt-1">Format XML with clean indentation and validate syntax with line-aware error feedback.</p>
             </div>
         </div>
         <div class="flex items-center gap-3 text-sm">
-            <button type="button" class="px-3 py-2 rounded-lg border border-appborder bg-[var(--surface)] hover:border-[#e11d48] transition">Share</button>
-            <a href="mailto:support@example.com?subject=Bug%20Report%20-%20XML%20Beautifier" class="text-[#06b6d4] hover:text-[#7c3aed]">Report bug</a>
+            <button type="button" class="px-3 py-2 rounded-lg border app-border app-surface hover:border-primary transition">Share</button>
+            <a href="mailto:support@example.com?subject=Bug%20Report%20-%20XML%20Beautifier" class="text-accent hover:text-primary transition">Report bug</a>
         </div>
     </div>
 
     <form method="post" class="space-y-5" onsubmit="formLoadingState('xml-submit-btn')">
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-5" data-scroll-reveal>
-            <section class="rounded-2xl border border-appborder bg-[var(--surface)] shadow-panel overflow-hidden flex flex-col min-h-[460px]">
-                <header class="px-4 py-3 border-b border-appborder border-t-2 border-t-[#e11d48] flex items-center justify-between">
+            <section class="rounded-2xl border app-border app-surface overflow-hidden flex flex-col min-h-[460px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 border-t-primary flex items-center justify-between">
                     <div>
                         <h2 class="font-semibold">Input</h2>
                         <p class="text-xs text-[var(--text-muted)]">Paste raw XML to beautify and validate</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="pasteFromClipboard('xml-input')" class="px-3 py-1.5 text-xs rounded-lg border border-appborder hover:border-[#e11d48]">Paste</button>
-                        <button type="button" onclick="clearInput('xml-input')" class="px-3 py-1.5 text-xs rounded-lg border border-appborder hover:border-[#e11d48]">Clear</button>
+                        <button type="button" onclick="pasteFromClipboard('xml-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Paste</button>
+                        <button type="button" onclick="clearInput('xml-input')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Clear</button>
                     </div>
                 </header>
                 <div class="flex-1 p-4 flex flex-col">
@@ -49,16 +49,16 @@
             </section>
 
             {% set is_error = result.startswith('Error:') if result else false %}
-            <section class="rounded-2xl border {{ 'border-[#f43f5e]' if is_error else 'border-[#10b981]' if result else 'border-appborder' }} bg-[var(--surface)] shadow-panel overflow-hidden flex flex-col min-h-[460px]">
-                <header class="px-4 py-3 border-b border-appborder border-t-2 {{ 'border-t-[#f43f5e]' if is_error else 'border-t-[#10b981]' if result else 'border-t-[#e11d48]' }} flex items-center justify-between">
+            <section class="rounded-2xl border {{ 'border-danger' if is_error else 'border-success' if result else 'app-border' }} app-surface overflow-hidden flex flex-col min-h-[460px]">
+                <header class="px-4 py-3 border-b app-border border-t-2 {{ 'border-t-danger' if is_error else 'border-t-success' if result else 'border-t-primary' }} flex items-center justify-between">
                     <div>
                         <h2 class="font-semibold">Output</h2>
                         <p class="text-xs text-[var(--text-muted)]">Beautified XML or validation details</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="copyToClipboard('xml-output')" class="px-3 py-1.5 text-xs rounded-lg border border-appborder hover:border-[#e11d48]">Copy</button>
-                        <button type="button" onclick="downloadOutput('xml-output','xml-beautified','xml')" class="px-3 py-1.5 text-xs rounded-lg border border-appborder hover:border-[#e11d48]">Download</button>
-                        <button type="button" onclick="fullscreenOutput('xml-output')" class="px-3 py-1.5 text-xs rounded-lg border border-appborder hover:border-[#e11d48]">Fullscreen</button>
+                        <button type="button" onclick="copyToClipboard('xml-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Copy</button>
+                        <button type="button" onclick="downloadOutput('xml-output','xml-beautified','xml')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Download</button>
+                        <button type="button" onclick="fullscreenOutput('xml-output')" class="px-3 py-1.5 text-xs rounded-lg border app-border hover:border-primary">Fullscreen</button>
                     </div>
                 </header>
                 <div class="flex-1 p-4 flex flex-col">
@@ -67,9 +67,9 @@
                         <textarea id="xml-output" readonly data-linenumbers="xml-output-lines" class="absolute inset-0 w-full h-full pl-14 pr-4 py-3 bg-transparent font-mono text-sm leading-6 resize-none outline-none text-[#f8fafc]">{{ result }}</textarea>
                     </div>
                     {% if is_error %}
-                    <p class="mt-2 text-xs text-[#f43f5e]">Validation failed. Fix the XML around the reported line and try again.</p>
+                    <p class="mt-2 text-xs text-danger">Validation failed. Fix the XML around the reported line and try again.</p>
                     {% elif result %}
-                    <p class="mt-2 text-xs text-[#10b981]">XML validated successfully.</p>
+                    <p class="mt-2 text-xs text-success">XML validated successfully.</p>
                     {% else %}
                     <p class="mt-2 text-xs text-[var(--text-muted)]">Your formatted XML will appear here.</p>
                     {% endif %}
@@ -78,7 +78,7 @@
         </div>
 
         <div class="flex justify-center">
-            <button id="xml-submit-btn" type="submit" class="group inline-flex items-center justify-center gap-2 w-full sm:w-auto min-w-[230px] px-6 py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-[#e11d48] to-[#7c3aed] hover:scale-[1.02] transition-transform">
+            <button id="xml-submit-btn" type="submit" class="btn-gradient w-full sm:w-auto min-w-[230px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold">
                 <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 12h9.75m-9.75 6h9.75M3.75 6h.008v.008H3.75V6Zm0 6h.008v.008H3.75V12Zm0 6h.008v.008H3.75V18Z" />
                 </svg>
@@ -89,19 +89,19 @@
     </form>
 
     <section>
-        <h3 class="text-lg font-semibold border-l-4 border-[#e11d48] pl-3 mb-4">You might also like</h3>
+        <h3 class="text-lg font-semibold border-l-4 border-primary pl-3 mb-4">You might also like</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <a href="/formatters/json-formatter" class="rounded-xl border border-appborder bg-[var(--surface)] p-4 hover:-translate-y-1 hover:shadow-[0_0_20px_#e11d4840] transition">
+            <a href="/formatters/json-formatter" class="tool-card rounded-xl border app-border app-surface p-4">
                 <p class="font-semibold">JSON Formatter</p>
-                <p class="text-sm text-[var(--text-muted)] mt-1">Beautify and validate JSON payloads.</p>
+                <p class="text-sm muted mt-1">Beautify and validate JSON payloads.</p>
             </a>
-            <a href="/formatters/html-minifier" class="rounded-xl border border-appborder bg-[var(--surface)] p-4 hover:-translate-y-1 hover:shadow-[0_0_20px_#e11d4840] transition">
+            <a href="/formatters/html-minifier" class="tool-card rounded-xl border app-border app-surface p-4">
                 <p class="font-semibold">HTML Minifier</p>
-                <p class="text-sm text-[var(--text-muted)] mt-1">Shrink HTML safely for production.</p>
+                <p class="text-sm muted mt-1">Shrink HTML safely for production.</p>
             </a>
-            <a href="/formatters/css-minifier" class="rounded-xl border border-appborder bg-[var(--surface)] p-4 hover:-translate-y-1 hover:shadow-[0_0_20px_#e11d4840] transition">
+            <a href="/formatters/css-minifier" class="tool-card rounded-xl border app-border app-surface p-4">
                 <p class="font-semibold">CSS Minifier</p>
-                <p class="text-sm text-[var(--text-muted)] mt-1">Compress style sheets quickly.</p>
+                <p class="text-sm muted mt-1">Compress style sheets quickly.</p>
             </a>
         </div>
     </section>
